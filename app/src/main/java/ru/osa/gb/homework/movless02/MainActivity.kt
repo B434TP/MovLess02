@@ -2,7 +2,8 @@ package ru.osa.gb.homework.movless02
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import ru.osa.gb.homework.movless02.ui.main.MainFragment
+import ru.osa.gb.homework.movless02.model.Movie
+import ru.osa.gb.homework.movless02.model.RepositoryLocalImpl
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,5 +15,6 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.container, MainFragment.newInstance())
                 .commitNow()
         }
+
     }
 }

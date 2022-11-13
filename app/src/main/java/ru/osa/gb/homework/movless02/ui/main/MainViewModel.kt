@@ -1,25 +1,23 @@
 package ru.osa.gb.homework.movless02.ui.main
 
-import android.os.Bundle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.lang.Thread.sleep
+import ru.osa.gb.homework.movless02.AppState
+import ru.osa.gb.homework.movless02.model.RepositoryLocalImpl
 
 class MainViewModel(
-    private val liveDataToObserve: MutableLiveData<Any> =
-        MutableLiveData()
-) :
-    ViewModel() {
-    fun getData(): LiveData<Any> {
-        getDataFromLocalSource()
-        return liveDataToObserve
-    }
+    private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
+    private val repositoryImpl: RepositoryLocalImpl = RepositoryLocalImpl()
+) : ViewModel() {
+
+    fun getLiveData() = liveDataToObserve
+
+    fun getMoviesFromLocalSource() = getDataFromLocalSource()
+
     private fun getDataFromLocalSource() {
+        liveDataToObserve.value = AppState.Loading
         Thread {
-            sleep(1000)
-            liveDataToObserve.postValue(Any())
+            liveDataToObserve.postValue(AppState.Success(repositoryImpl.getMoviesListByTitle("test")))
         }.start()
     }
-
 }

@@ -1,43 +1,58 @@
-package ru.osa.gb.homework.movless02.ui.main
-
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import ru.osa.gb.homework.movless02.R
+import androidx.lifecycle.ViewModelProvider
+import ru.osa.gb.homework.movless02.AppState
+import ru.osa.gb.homework.movless02.databinding.FragmentMainBinding
+import ru.osa.gb.homework.movless02.ui.main.MainFragmentAdapter
+import ru.osa.gb.homework.movless02.ui.main.MainViewModel
 
 class MainFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-
+    private val adapter = MainFragmentAdapter()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.getRoot()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.mainFragmentRecyclerView.adapter = adapter
+
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val observer = Observer<Any> { renderData(it) }
-        viewModel.getData().observe(viewLifecycleOwner, observer)
+        viewModel.getLiveData().observe(viewLifecycleOwner, Observer {
+            renderData(it)
+        })
+        viewModel.getMoviesFromLocalSource()
+    }
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.Success -> {
+                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                adapter.setMovieList(appState.moviesData)
+            }
+            is AppState.Loading -> {
+                binding.mainFragmentLoadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                Log.e("ERR", "LIST LOADING ERROR in renderData from AppState.Error")
+            }
+        }
     }
 
-    private fun renderData(data: Any) {
-        Toast.makeText(context, "data", Toast.LENGTH_LONG).show()
+
+    companion object {
+        fun newInstance() =
+            MainFragment()
     }
-
-
-
-
-
 }
