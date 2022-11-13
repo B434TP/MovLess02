@@ -12,7 +12,8 @@ import ru.osa.gb.homework.movless02.R
 import ru.osa.gb.homework.movless02.model.Movie
 
 
-class MainFragmentAdapter :
+class MainFragmentAdapter(private var onItemViewClickListener:
+                          MainFragment.OnItemViewClickListener?) :
     RecyclerView.Adapter<MainFragmentAdapter.MainViewHolder>() {
     private var movieData: List<Movie> = listOf()
     fun setMovieList(data: List<Movie>) {
@@ -31,6 +32,10 @@ class MainFragmentAdapter :
         )
     }
 
+    fun removeListener() {
+        onItemViewClickListener = null
+    }
+
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.bind(movieData[position])
     }
@@ -41,7 +46,7 @@ class MainFragmentAdapter :
 
     inner class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(movie: Movie) {
-            itemView.findViewById<TextView>(R.id.moviesListItemTitle).text = movie.title
+              itemView.findViewById<TextView>(R.id.moviesListItemTitle).text = movie.title
             itemView.findViewById<TextView>(R.id.moviesListItemDescription).text = movie.description
             var img : ImageView = itemView.findViewById(R.id.moviesListItemImage)
 
@@ -50,11 +55,7 @@ class MainFragmentAdapter :
 //                .load(movie.image)
 //                .into(img)
             itemView.setOnClickListener {
-                Toast.makeText(
-                    itemView.context,
-                    movie.title,
-                    Toast.LENGTH_LONG
-                ).show()
+                onItemViewClickListener?.onItemViewClick(movie)
             }
         }
     }

@@ -7,7 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.osa.gb.homework.movless02.AppState
+import ru.osa.gb.homework.movless02.MovieDetailFragment
+import ru.osa.gb.homework.movless02.R
 import ru.osa.gb.homework.movless02.databinding.FragmentMainBinding
+import ru.osa.gb.homework.movless02.model.Movie
 import ru.osa.gb.homework.movless02.ui.main.MainFragmentAdapter
 import ru.osa.gb.homework.movless02.ui.main.MainViewModel
 
@@ -15,14 +18,35 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
-    private val adapter = MainFragmentAdapter()
+    private val adapter = MainFragmentAdapter(
+        object : OnItemViewClickListener {
+            override fun onItemViewClick(movie: Movie) {
+                val manager = activity?.supportFragmentManager
+                if (manager != null) {
+                    val bundle = Bundle()
+                    bundle.putParcelable(MovieDetailFragment.BUNDLE_EXTRA, movie)
+                    manager.beginTransaction()
+                        .add(R.id.container, MovieDetailFragment.newInstance(bundle))
+                        .addToBackStack("")
+                        .commitAllowingStateLoss()
+                }
+            }
+        }
+
+    )
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.getRoot()
+        return binding.root
     }
+
+    override fun onDestroy() {
+        adapter.removeListener()
+        super.onDestroy()
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,6 +58,7 @@ class MainFragment : Fragment() {
         })
         viewModel.getMoviesFromLocalSource()
     }
+
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
@@ -50,6 +75,9 @@ class MainFragment : Fragment() {
         }
     }
 
+    interface OnItemViewClickListener {
+        fun onItemViewClick(movie: Movie)
+    }
 
     companion object {
         fun newInstance() =
