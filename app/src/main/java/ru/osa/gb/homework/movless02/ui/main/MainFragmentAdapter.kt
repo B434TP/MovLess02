@@ -1,6 +1,7 @@
 package ru.osa.gb.homework.movless02.ui.main
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +9,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.osa.gb.homework.movless02.R
 import ru.osa.gb.homework.movless02.model.Movie
 
 
-class MainFragmentAdapter(private var onItemViewClickListener:
-                          MainFragment.OnItemViewClickListener?) :
+class MainFragmentAdapter(
+    private var onItemViewClickListener:
+    MainFragment.OnItemViewClickListener?
+) :
     RecyclerView.Adapter<MainFragmentAdapter.MainViewHolder>() {
     private var movieData: List<Movie> = listOf()
     fun setMovieList(data: List<Movie>) {
@@ -46,14 +50,12 @@ class MainFragmentAdapter(private var onItemViewClickListener:
 
     inner class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(movie: Movie) {
-              itemView.findViewById<TextView>(R.id.moviesListItemTitle).text = movie.title
+            itemView.findViewById<TextView>(R.id.moviesListItemTitle).text = movie.title
             itemView.findViewById<TextView>(R.id.moviesListItemDescription).text = movie.description
-            var img : ImageView = itemView.findViewById(R.id.moviesListItemImage)
-
-            // На будущее разобраться как правильно загружать картинки по url
-//            Glide.with(itemView)
-//                .load(movie.image)
-//                .into(img)
+            var img: ImageView = itemView.findViewById(R.id.moviesListItemImage)
+            Glide.with(itemView)
+                .load(movie.image)
+                .into(img)
             itemView.setOnClickListener {
                 onItemViewClickListener?.onItemViewClick(movie)
             }

@@ -34,6 +34,7 @@ class MainFragment : Fragment() {
         }
 
     )
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,7 +47,6 @@ class MainFragment : Fragment() {
         adapter.removeListener()
         super.onDestroy()
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

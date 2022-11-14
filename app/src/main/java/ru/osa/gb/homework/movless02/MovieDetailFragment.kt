@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import ru.osa.gb.homework.movless02.databinding.FragmentMovieDetailBinding
 import ru.osa.gb.homework.movless02.model.Movie
+import ru.osa.gb.homework.movless02.model.MovieFullData
+import ru.osa.gb.homework.movless02.model.RepositoryLocalImpl
 
 class MovieDetailFragment : Fragment() {
 
@@ -35,8 +38,15 @@ class MovieDetailFragment : Fragment() {
         if (movie != null) {
             binding.detailViewTitle.text = movie.title
             binding.detailViewId.text = movie.id
-            binding.detailViewDescription.text = movie.description
-            // TODO: binding.detailViewImage научиться менять картинку из URL
+
+            val fullData: MovieFullData = getFullData(movie.id)
+
+            binding.detailViewDescription.text = fullData.plot
+            binding.detailViewRating.text = fullData.imDbRating
+            binding.detailViewImage
+            Glide.with(this)
+                .load(movie.image)
+                .into(binding.detailViewImage)
         }
     }
 
@@ -50,5 +60,9 @@ class MovieDetailFragment : Fragment() {
         }
     }
 
+    private fun getFullData(id: String): MovieFullData {
+        val rep = RepositoryLocalImpl()
+        return rep.getMovieById(id)
+    }
 
 }
