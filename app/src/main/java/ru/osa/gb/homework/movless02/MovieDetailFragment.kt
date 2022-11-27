@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import ru.osa.gb.homework.movless02.databinding.FragmentMovieDetailBinding
 import ru.osa.gb.homework.movless02.model.Movie
 import ru.osa.gb.homework.movless02.model.MovieFullData
+import ru.osa.gb.homework.movless02.model.RepositoryInternetImpl
 import ru.osa.gb.homework.movless02.model.RepositoryLocalImpl
 
 class MovieDetailFragment : Fragment() {
@@ -61,7 +62,7 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun getFullData(id: String): MovieFullData {
-        val rep = RepositoryLocalImpl()
+        val rep = RepositoryInternetImpl()
         return rep.getMovieById(id)
     }
 
